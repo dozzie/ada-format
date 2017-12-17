@@ -110,7 +110,7 @@ package body format is
   -- printing to a string
 
   procedure parse_placeholder(fmt: in string; start: in out integer;
-                              n: in out positive) is
+                              auto_n: in out positive; n: in out positive) is
     nn: natural := 0;
     i: integer := start;
   begin
@@ -125,6 +125,14 @@ package body format is
       raise constraint_error; -- TODO: different error
     end if;
     i := i + 1;
+
+    if fmt(i) = '}' then
+      -- automatic variables, short-circuit
+      n := auto_n;
+      auto_n := auto_n + 1;
+      start := i;
+      return;
+    end if;
 
     -- NOTE: keep one unchecked character at the end of string; if we got that
     -- far, it should be '}' or an error will be raised
@@ -145,6 +153,7 @@ package body format is
   function count_format(fmt: string; args: value_list) return natural is
     len: natural := 0;
     i: integer := fmt'first;
+    auto_n: integer := args'first;
   begin
     -- NOTE: remember to include the last character
     while i < fmt'last loop
@@ -172,7 +181,7 @@ package body format is
           declare
             n: positive := 1;
           begin
-            parse_placeholder(fmt, i, n);
+            parse_placeholder(fmt, i, auto_n, n);
             if n not in args'range then
               raise constraint_error; -- TODO: different error
             end if;
@@ -199,6 +208,7 @@ package body format is
   function format(fmt: string; args: value_list) return string is
     total_len: constant natural := count_format(fmt, args);
     result: string(1..total_len);
+    auto_n: integer := args'first;
     fi: integer := fmt'first;
     ri: integer := result'first;
   begin
@@ -226,7 +236,7 @@ package body format is
           declare
             n: positive := 1;
           begin
-            parse_placeholder(fmt, fi, n);
+            parse_placeholder(fmt, fi, auto_n, n);
             -- NOTE: `(n not in args'range)' ruled out by count_format()
             result(ri .. ri + args(n).str'length - 1) := args(n).str.all;
             ri := ri + args(n).str'length;
