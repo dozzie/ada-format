@@ -38,10 +38,10 @@ package format is
   ----------------------------------------------------------------------------
   -- printing to a string
 
-  function format(fmt: string) return string;
-  function format(fmt: string; args: value_list) return string;
-  procedure format(str: in out string; fmt: string);
-  procedure format(str: in out string; fmt: string; args: value_list);
+  function sformat(fmt: string) return string;
+  function sformat(fmt: string; args: value_list) return string;
+  procedure sformat(str: in out string; fmt: string);
+  procedure sformat(str: in out string; fmt: string; args: value_list);
 
   ----------------------------------------------------------------------------
 

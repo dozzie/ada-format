@@ -50,7 +50,7 @@ package body format is
 
   procedure print(fmt: string; args: value_list) is
   begin
-    ada.text_io.put(format(fmt, args));
+    ada.text_io.put(sformat(fmt, args));
   end;
 
   procedure print(fmt: string) is
@@ -60,7 +60,7 @@ package body format is
   end;
 
   procedure println(fmt: string; args: value_list) is
-    str: constant string := format(fmt, args);
+    str: constant string := sformat(fmt, args);
   begin
     if str(str'last) = ASCII.LF then
       ada.text_io.put_line(str(str'first .. str'last - 1));
@@ -80,7 +80,7 @@ package body format is
 
   procedure print(file: in out ada.text_io.file_type; fmt: string; args: value_list) is
   begin
-    ada.text_io.put(file, format(fmt, args));
+    ada.text_io.put(file, sformat(fmt, args));
   end;
 
   procedure print(file: in out ada.text_io.file_type; fmt: string) is
@@ -91,7 +91,7 @@ package body format is
 
   procedure println(file: in out ada.text_io.file_type;
                     fmt: string; args: value_list) is
-    str: constant string := format(fmt, args);
+    str: constant string := sformat(fmt, args);
   begin
     if str(str'last) = ASCII.LF then
       ada.text_io.put_line(file, str(str'first .. str'last - 1));
@@ -205,7 +205,7 @@ package body format is
     return len;
   end;
 
-  function format(fmt: string; args: value_list) return string is
+  function sformat(fmt: string; args: value_list) return string is
     total_len: constant natural := count_format(fmt, args);
     result: string(1..total_len);
     auto_n: integer := args'first;
@@ -258,22 +258,22 @@ package body format is
     return result;
   end;
 
-  function format(fmt: string) return string is
+  function sformat(fmt: string) return string is
     args: value_list(1..0);
   begin
-    return format(fmt, args);
+    return sformat(fmt, args);
   end;
 
-  procedure format(str: in out string; fmt: string; args: value_list) is
-    result: constant string := format(fmt, args);
+  procedure sformat(str: in out string; fmt: string; args: value_list) is
+    result: constant string := sformat(fmt, args);
   begin
     -- NOTE: this will raise CONSTRAINT_ERROR if the output string is too
     -- short
     str(str'first .. str'first + result'length - 1) := result;
   end;
 
-  procedure format(str: in out string; fmt: string) is
-    result: constant string := format(fmt);
+  procedure sformat(str: in out string; fmt: string) is
+    result: constant string := sformat(fmt);
   begin
     -- NOTE: this will raise CONSTRAINT_ERROR if the output string is too
     -- short
