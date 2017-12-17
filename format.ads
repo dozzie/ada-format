@@ -40,8 +40,8 @@ package format is
 
   function format(fmt: string) return string;
   function format(fmt: string; args: value_list) return string;
-  --procedure format(s: in out string; fmt: string);
-  --procedure format(s: in out string; fmt: string; args: value_list);
+  procedure format(str: in out string; fmt: string);
+  procedure format(str: in out string; fmt: string; args: value_list);
 
   ----------------------------------------------------------------------------
 

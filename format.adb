@@ -264,15 +264,21 @@ package body format is
     return format(fmt, args);
   end;
 
-  --procedure format(str: in out string; fmt: string; args: value_list) is
-  --begin
-  --end;
+  procedure format(str: in out string; fmt: string; args: value_list) is
+    result: constant string := format(fmt, args);
+  begin
+    -- NOTE: this will raise CONSTRAINT_ERROR if the output string is too
+    -- short
+    str(str'first .. str'first + result'length - 1) := result;
+  end;
 
-  --procedure format(str: in out string; fmt: string) is
-  --  args: value_list(1..0);
-  --begin
-  --  return format(str, fmt, args);
-  --end;
+  procedure format(str: in out string; fmt: string) is
+    result: constant string := format(fmt);
+  begin
+    -- NOTE: this will raise CONSTRAINT_ERROR if the output string is too
+    -- short
+    str(str'first .. str'first + result'length - 1) := result;
+  end;
 
   ----------------------------------------------------------------------------
   -- procedures inherited from ada.finalization.limited_controlled
