@@ -59,6 +59,82 @@ package body format is
     print(fmt, args);
   end;
 
+  ----------------------------------------------------------
+  -- print(fmt, arg1, ...) {{{
+
+  procedure print(fmt: string; arg1: value) is
+    args: value_list(1..1);
+  begin
+    args(1).str := arg1.str;
+
+    print(fmt, args);
+
+    for i in args'range loop
+      args(1).str := null;
+    end loop;
+  end;
+
+  procedure print(fmt: string; arg1, arg2: value) is
+    args: value_list(1..2);
+  begin
+    args(1).str := arg1.str;
+    args(2).str := arg2.str;
+
+    print(fmt, args);
+
+    for i in args'range loop
+      args(1).str := null;
+    end loop;
+  end;
+
+  procedure print(fmt: string; arg1, arg2, arg3: value) is
+    args: value_list(1..3);
+  begin
+    args(1).str := arg1.str;
+    args(2).str := arg2.str;
+    args(3).str := arg3.str;
+
+    print(fmt, args);
+
+    for i in args'range loop
+      args(1).str := null;
+    end loop;
+  end;
+
+  procedure print(fmt: string; arg1, arg2, arg3, arg4: value) is
+    args: value_list(1..4);
+  begin
+    args(1).str := arg1.str;
+    args(2).str := arg2.str;
+    args(3).str := arg3.str;
+    args(4).str := arg4.str;
+
+    print(fmt, args);
+
+    for i in args'range loop
+      args(1).str := null;
+    end loop;
+  end;
+
+  procedure print(fmt: string; arg1, arg2, arg3, arg4, arg5: value) is
+    args: value_list(1..5);
+  begin
+    args(1).str := arg1.str;
+    args(2).str := arg2.str;
+    args(3).str := arg3.str;
+    args(4).str := arg4.str;
+    args(5).str := arg5.str;
+
+    print(fmt, args);
+
+    for i in args'range loop
+      args(1).str := null;
+    end loop;
+  end;
+
+  -- }}}
+  ----------------------------------------------------------
+
   procedure println(fmt: string; args: value_list) is
     str: constant string := sformat(fmt, args);
   begin
@@ -74,6 +150,82 @@ package body format is
   begin
     println(fmt, args);
   end;
+
+  ----------------------------------------------------------
+  -- println(fmt, arg1, ...) {{{
+
+  procedure println(fmt: string; arg1: value) is
+    args: value_list(1..1);
+  begin
+    args(1).str := arg1.str;
+
+    println(fmt, args);
+
+    for i in args'range loop
+      args(1).str := null;
+    end loop;
+  end;
+
+  procedure println(fmt: string; arg1, arg2: value) is
+    args: value_list(1..2);
+  begin
+    args(1).str := arg1.str;
+    args(2).str := arg2.str;
+
+    println(fmt, args);
+
+    for i in args'range loop
+      args(1).str := null;
+    end loop;
+  end;
+
+  procedure println(fmt: string; arg1, arg2, arg3: value) is
+    args: value_list(1..3);
+  begin
+    args(1).str := arg1.str;
+    args(2).str := arg2.str;
+    args(3).str := arg3.str;
+
+    println(fmt, args);
+
+    for i in args'range loop
+      args(1).str := null;
+    end loop;
+  end;
+
+  procedure println(fmt: string; arg1, arg2, arg3, arg4: value) is
+    args: value_list(1..4);
+  begin
+    args(1).str := arg1.str;
+    args(2).str := arg2.str;
+    args(3).str := arg3.str;
+    args(4).str := arg4.str;
+
+    println(fmt, args);
+
+    for i in args'range loop
+      args(1).str := null;
+    end loop;
+  end;
+
+  procedure println(fmt: string; arg1, arg2, arg3, arg4, arg5: value) is
+    args: value_list(1..5);
+  begin
+    args(1).str := arg1.str;
+    args(2).str := arg2.str;
+    args(3).str := arg3.str;
+    args(4).str := arg4.str;
+    args(5).str := arg5.str;
+
+    println(fmt, args);
+
+    for i in args'range loop
+      args(1).str := null;
+    end loop;
+  end;
+
+  -- }}}
+  ----------------------------------------------------------
 
   ----------------------------------------------------------------------------
   -- printing to a file

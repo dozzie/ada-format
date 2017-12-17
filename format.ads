@@ -22,10 +22,21 @@ package format is
   ----------------------------------------------------------------------------
   -- printing to STDOUT
 
-  procedure print(fmt: string);
   procedure print(fmt: string; args: value_list);
-  procedure println(fmt: string);
+  procedure print(fmt: string);
+  procedure print(fmt: string; arg1: value);
+  procedure print(fmt: string; arg1, arg2: value);
+  procedure print(fmt: string; arg1, arg2, arg3: value);
+  procedure print(fmt: string; arg1, arg2, arg3, arg4: value);
+  procedure print(fmt: string; arg1, arg2, arg3, arg4, arg5: value);
+
   procedure println(fmt: string; args: value_list);
+  procedure println(fmt: string);
+  procedure println(fmt: string; arg1: value);
+  procedure println(fmt: string; arg1, arg2: value);
+  procedure println(fmt: string; arg1, arg2, arg3: value);
+  procedure println(fmt: string; arg1, arg2, arg3, arg4: value);
+  procedure println(fmt: string; arg1, arg2, arg3, arg4, arg5: value);
 
   ----------------------------------------------------------------------------
   -- printing to a file
