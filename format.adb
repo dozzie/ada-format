@@ -63,7 +63,7 @@ package body format is
     str: constant string := format(fmt, args);
   begin
     if str(str'last) = ASCII.LF then
-      ada.text_io.put(str);
+      ada.text_io.put_line(str(str'first .. str'last - 1));
     else
       ada.text_io.put_line(str);
     end if;
@@ -89,11 +89,12 @@ package body format is
     print(file, fmt, args);
   end;
 
-  procedure println(file: in out ada.text_io.file_type; fmt: string; args: value_list) is
+  procedure println(file: in out ada.text_io.file_type;
+                    fmt: string; args: value_list) is
     str: constant string := format(fmt, args);
   begin
     if str(str'last) = ASCII.LF then
-      ada.text_io.put(file, str);
+      ada.text_io.put_line(file, str(str'first .. str'last - 1));
     else
       ada.text_io.put_line(file, str);
     end if;
