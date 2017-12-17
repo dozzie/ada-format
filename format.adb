@@ -150,6 +150,21 @@ package body format is
     start := i;
   end;
 
+  function is_hex(c: character) return boolean is
+  begin
+    return (c in '0'..'9') or (c in 'A'..'F') or (c in 'a'..'f');
+  end;
+
+  function hex(c: character) return natural is
+  begin
+    case c is
+      when '0' .. '9' => return      character'pos(c) - character'pos('0');
+      when 'A' .. 'F' => return 10 + character'pos(c) - character'pos('A');
+      when 'a' .. 'f' => return 10 + character'pos(c) - character'pos('a');
+      when others => raise constraint_error; -- TODO: different error
+    end case;
+  end;
+
   function count_format(fmt: string; args: value_list) return natural is
     len: natural := 0;
     i: integer := fmt'first;
@@ -172,7 +187,17 @@ package body format is
             when 'n' => len := len + 1;
             when 'r' => len := len + 1;
             when 't' => len := len + 1;
-            -- TODO: \xCC, \uCCCC
+            when 'x' =>
+              if i + 2 > fmt'last then
+                -- too short
+                raise constraint_error; -- TODO: different error
+              elsif (not is_hex(fmt(i + 1))) or (not is_hex(fmt(i + 2))) then
+                raise constraint_error; -- TODO: different error
+              else
+                i := i + 2;
+                len := len + 1;
+              end if;
+            -- TODO: \uCCCC
             -- invalid escape sequence
             when others => raise constraint_error; -- TODO: different error
           end case;
@@ -228,7 +253,13 @@ package body format is
             when 'n' => result(ri) := ASCII.LF; ri := ri + 1;
             when 'r' => result(ri) := ASCII.CR; ri := ri + 1;
             when 't' => result(ri) := ASCII.HT; ri := ri + 1;
-            -- TODO: \xCC, \uCCCC
+            when 'x' =>
+              -- invalid sequences ruled out by count_format()
+              result(ri) := character'val(hex(fmt(fi + 1)) * 16 +
+                                          hex(fmt(fi + 2)));
+              ri := ri + 1;
+              fi := fi + 2;
+            -- TODO: \uCCCC
             when others => null; -- ruled out by count_format()
           end case;
           fi := fi + 1;
