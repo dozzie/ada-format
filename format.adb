@@ -109,6 +109,9 @@ package body format is
   ----------------------------------------------------------------------------
   -- printing to a string
 
+  ----------------------------------------------------------
+  -- placeholders {{{
+
   procedure parse_placeholder(fmt: in string; start: in out integer;
                               auto_n: in out positive; n: in out positive) is
     nn: natural := 0;
@@ -149,6 +152,10 @@ package body format is
     n := nn; -- `nn = 0' was ruled out by above `if'
     start := i;
   end;
+
+  -- }}}
+  ----------------------------------------------------------
+  -- character decoding {{{
 
   function is_hex(c: character) return boolean is
   begin
@@ -218,6 +225,10 @@ package body format is
         raise constraint_error; -- TODO: different error
     end case;
   end;
+
+  -- }}}
+  ----------------------------------------------------------
+  -- output string length calculation {{{
 
   function count_format(fmt: string; args: value_list) return natural is
     len: natural := 0;
@@ -293,6 +304,9 @@ package body format is
 
     return len;
   end;
+
+  -- }}}
+  ----------------------------------------------------------
 
   function sformat(fmt: string; args: value_list) return string is
     total_len: constant natural := count_format(fmt, args);
@@ -399,3 +413,6 @@ package body format is
     end if;
   end;
 end;
+
+----------------------------------------------------------------------------
+-- vim:ft=ada:foldmethod=marker
