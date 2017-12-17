@@ -165,6 +165,60 @@ package body format is
     end case;
   end;
 
+  function ucode(c: string) return natural is
+    code: natural := 0;
+  begin
+    for i in c'range loop
+      code := code * 16 + hex(c(i));
+    end loop;
+    return code;
+  end;
+
+  function ulen(c: string) return positive is
+  begin
+    case ucode(c) is
+      when 16#0000# .. 16#007F# => return 1;
+      when 16#0080# .. 16#07FF# => return 2;
+      when 16#0800# .. 16#FFFF# => return 3;
+      when others => return 4;
+    end case;
+  end;
+
+  function unicode(c: string) return string is
+    code: constant integer := ucode(c);
+  begin
+    case code is
+      when 16#0000# .. 16#007F# =>
+        return (
+          1 => character'val(code)
+        );
+      when 16#0080# .. 16#07FF# =>
+        -- 110xxxxx 10xxxxxx
+        return (
+          1 => character'val(2#11000000# + (code / 2 ** 6)),
+          2 => character'val(2#10000000# + (code rem 2 ** 6))
+        );
+      when 16#0800# .. 16#FFFF# =>
+        -- 1110xxxx 10xxxxxx 10xxxxxx
+        return (
+          1 => character'val(2#11100000# + (code / 2 ** 12)),
+          2 => character'val(2#10000000# + ((code rem 2 ** 12) / 2 ** 6)),
+          3 => character'val(2#10000000# + (code rem 2 ** 6))
+        );
+      when 16#10000# .. 16#10FFFF# =>
+        -- 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
+        return (
+          1 => character'val(2#11110000# + (code / 2 ** 18)),
+          2 => character'val(2#10000000# + ((code rem 2 ** 18) / 2 ** 12)),
+          3 => character'val(2#10000000# + ((code rem 2 ** 12) / 2 ** 6)),
+          4 => character'val(2#10000000# + (code rem 2 ** 6))
+        );
+      when others =>
+        -- invalid Unicode codepoint
+        raise constraint_error; -- TODO: different error
+    end case;
+  end;
+
   function count_format(fmt: string; args: value_list) return natural is
     len: natural := 0;
     i: integer := fmt'first;
@@ -197,7 +251,17 @@ package body format is
                 i := i + 2;
                 len := len + 1;
               end if;
-            -- TODO: \uCCCC
+            when 'u' =>
+              if i + 4 > fmt'last then
+                -- too short
+                raise constraint_error; -- TODO: different error
+              elsif (not is_hex(fmt(i + 1))) or (not is_hex(fmt(i + 2))) or
+                    (not is_hex(fmt(i + 3))) or (not is_hex(fmt(i + 4))) then
+                raise constraint_error; -- TODO: different error
+              else
+                len := len + ulen(fmt(i + 1 .. i + 4));
+                i := i + 4;
+              end if;
             -- invalid escape sequence
             when others => raise constraint_error; -- TODO: different error
           end case;
@@ -259,7 +323,15 @@ package body format is
                                           hex(fmt(fi + 2)));
               ri := ri + 1;
               fi := fi + 2;
-            -- TODO: \uCCCC
+            when 'u' =>
+              -- invalid sequences ruled out by count_format()
+              declare
+                utf: constant string := unicode(fmt(fi + 1 .. fi + 4));
+              begin
+                result(ri .. ri + utf'length - 1) := utf;
+                ri := ri + utf'length;
+              end;
+              fi := fi + 4;
             when others => null; -- ruled out by count_format()
           end case;
           fi := fi + 1;
