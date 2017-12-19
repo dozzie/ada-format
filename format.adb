@@ -380,7 +380,7 @@ package body format is
 
   -- }}}
   ----------------------------------------------------------
-  -- output string length calculation {{{
+  -- output string {{{
 
   function count_format(fmt: string; args: value_list) return natural is
     len: natural := 0;
@@ -457,12 +457,8 @@ package body format is
     return len;
   end;
 
-  -- }}}
-  ----------------------------------------------------------
-
-  function sformat(fmt: string; args: value_list) return string is
-    total_len: constant natural := count_format(fmt, args);
-    result: string(1..total_len);
+  procedure store_format(result: in out string;
+                         fmt: string; args: value_list) is
     auto_n: integer := args'first;
     fi: integer := fmt'first;
     ri: integer := result'first;
@@ -477,7 +473,6 @@ package body format is
       result(ri .. ri + s'length - 1) := s;
       ri := ri + s'length;
     end;
-
   begin
     while fi < fmt'last loop
       case fmt(fi) is
@@ -527,8 +522,17 @@ package body format is
     if fi = fmt'last then -- can be past fmt'last, e.g. after "\n"
       result_put(fmt(fi));
     end if;
+  end;
 
-    return result;
+  -- }}}
+  ----------------------------------------------------------
+
+  function sformat(fmt: string; args: value_list) return string is
+    length: constant natural := count_format(fmt, args);
+  begin
+    return result: string(1..length) do
+      store_format(result, fmt, args);
+    end return;
   end;
 
   function sformat(fmt: string) return string is
@@ -538,19 +542,18 @@ package body format is
   end;
 
   procedure sformat(str: in out string; fmt: string; args: value_list) is
-    result: constant string := sformat(fmt, args);
+    length: constant natural := count_format(fmt, args);
   begin
-    -- NOTE: this will raise CONSTRAINT_ERROR if the output string is too
-    -- short
-    str(str'first .. str'first + result'length - 1) := result;
+    if str'length < length then
+      raise constraint_error; -- TODO: different error
+    end if;
+    store_format(str, fmt, args);
   end;
 
   procedure sformat(str: in out string; fmt: string) is
-    result: constant string := sformat(fmt);
+    args: value_list(1..0);
   begin
-    -- NOTE: this will raise CONSTRAINT_ERROR if the output string is too
-    -- short
-    str(str'first .. str'first + result'length - 1) := result;
+    sformat(str, fmt, args);
   end;
 
   ----------------------------------------------------------------------------
