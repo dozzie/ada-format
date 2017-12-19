@@ -466,37 +466,43 @@ package body format is
     auto_n: integer := args'first;
     fi: integer := fmt'first;
     ri: integer := result'first;
+
+    procedure result_put(c: character) is
+    begin
+      result(ri) := c;
+      ri := ri + 1;
+    end;
+    procedure result_put(s: string) is
+    begin
+      result(ri .. ri + s'length - 1) := s;
+      ri := ri + s'length;
+    end;
+
   begin
     while fi < fmt'last loop
       case fmt(fi) is
         when '\' =>
           fi := fi + 1;
           case fmt(fi) is
-            when '{' => result(ri) := '{'; ri := ri + 1;
-            when '}' => result(ri) := '}'; ri := ri + 1; -- symmetry with "\{"
-            when ''' => result(ri) := '"'; ri := ri + 1; -- convenience code
-            when '"' => result(ri) := '"'; ri := ri + 1;
-            when '\' => result(ri) := '\'; ri := ri + 1;
-            when '/' => result(ri) := '/'; ri := ri + 1;
-            when 'b' => result(ri) := ASCII.BS; ri := ri + 1;
-            when 'f' => result(ri) := ASCII.FF; ri := ri + 1;
-            when 'n' => result(ri) := ASCII.LF; ri := ri + 1;
-            when 'r' => result(ri) := ASCII.CR; ri := ri + 1;
-            when 't' => result(ri) := ASCII.HT; ri := ri + 1;
+            when '{' => result_put('{');
+            when '}' => result_put('}'); -- symmetry with "\{"
+            when ''' => result_put('"'); -- convenience code
+            when '"' => result_put('"');
+            when '\' => result_put('\');
+            when '/' => result_put('/');
+            when 'b' => result_put(ASCII.BS);
+            when 'f' => result_put(ASCII.FF);
+            when 'n' => result_put(ASCII.LF);
+            when 'r' => result_put(ASCII.CR);
+            when 't' => result_put(ASCII.HT);
             when 'x' =>
               -- invalid sequences ruled out by count_format()
-              result(ri) := character'val(hex(fmt(fi + 1)) * 16 +
-                                          hex(fmt(fi + 2)));
-              ri := ri + 1;
+              result_put(character'val(hex(fmt(fi + 1)) * 16 +
+                                       hex(fmt(fi + 2))));
               fi := fi + 2;
             when 'u' =>
               -- invalid sequences ruled out by count_format()
-              declare
-                utf: constant string := unicode(fmt(fi + 1 .. fi + 4));
-              begin
-                result(ri .. ri + utf'length - 1) := utf;
-                ri := ri + utf'length;
-              end;
+              result_put(unicode(fmt(fi + 1 .. fi + 4)));
               fi := fi + 4;
             when others => null; -- ruled out by count_format()
           end case;
@@ -507,13 +513,11 @@ package body format is
           begin
             parse_placeholder(fmt, fi, auto_n, n);
             -- NOTE: `(n not in args'range)' ruled out by count_format()
-            result(ri .. ri + args(n).str'length - 1) := args(n).str.all;
-            ri := ri + args(n).str'length;
+            result_put(args(n).str.all);
           end;
           fi := fi + 1;
         when others =>
-          result(ri) := fmt(fi);
-          ri := ri + 1;
+          result_put(fmt(fi));
           fi := fi + 1;
       end case;
     end loop;
@@ -521,7 +525,7 @@ package body format is
     -- NOTE: fmt(i) being '\' or '{' is ruled out by count_format()
 
     if fi = fmt'last then -- can be past fmt'last, e.g. after "\n"
-      result(ri) := fmt(fi);
+      result_put(fmt(fi));
     end if;
 
     return result;
