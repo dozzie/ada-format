@@ -2,3 +2,5 @@
 *.o
 *.ali
 b~*
+lib*.so
+lib*.a

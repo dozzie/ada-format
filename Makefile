@@ -14,6 +14,18 @@ main: main.o format.o
 main.o: format.ads
 format.o: format.ads
 
+#-----------------------------------------------------------------------------
+
+.PHONY: lib
+lib: libformat.a format.ali
+
+format.ali: format.o
+
+libformat.a: format.o
+	ar rc $@ $^
+
+#-----------------------------------------------------------------------------
+
 .PHONY: clean
 clean:
-	rm -f main *.o *.ali b~*
+	rm -f main lib*.a lib*.so *.o *.ali b~*
