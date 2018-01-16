@@ -1,0 +1,17 @@
+with "format"; -- `format.gpr' expected in `/usr/share/ada/adainclude'
+
+project example is
+  for main use ("main.adb");
+
+  package compiler is -- gcc -c ...
+    for default_switches ("ada") use ("-gnatwa");
+  end compiler;
+
+  package binder is -- gnatbind ...
+    for default_switches ("ada") use ("-static");
+  end binder;
+
+  package linker is -- gnatlink
+    for default_switches ("ada") use ("-g");
+  end linker;
+end example;
