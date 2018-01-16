@@ -1,0 +1,16 @@
+project format is
+  for library_name use "format";
+
+  -- Debian conventions:
+  --for source_dirs     use ("/usr/share/ada/adainclude/<name>"); -- *.ads
+  --for library_dir     use  "/usr/lib";                    -- lib*.{so,a}
+  --for library_ali_dir use  "/usr/lib/ada/adalib/<name>";  -- *.ali
+
+  -- my local conventions
+  for source_dirs     use ("/usr/local/lib/ada/format/include");
+  for library_dir     use  "/usr/local/lib/ada/format/lib";
+  for library_ali_dir use  "/usr/local/lib/ada/format/lib";
+
+  for library_kind     use "static"; -- "static" | "dynamic"
+  for externally_built use "true";
+end format;
