@@ -70,7 +70,7 @@ package body format is
     print(fmt, args);
 
     for i in args'range loop
-      args(1).str := null;
+      args(i).str := null;
     end loop;
   end;
 
@@ -83,7 +83,7 @@ package body format is
     print(fmt, args);
 
     for i in args'range loop
-      args(1).str := null;
+      args(i).str := null;
     end loop;
   end;
 
@@ -97,7 +97,7 @@ package body format is
     print(fmt, args);
 
     for i in args'range loop
-      args(1).str := null;
+      args(i).str := null;
     end loop;
   end;
 
@@ -112,7 +112,7 @@ package body format is
     print(fmt, args);
 
     for i in args'range loop
-      args(1).str := null;
+      args(i).str := null;
     end loop;
   end;
 
@@ -128,7 +128,7 @@ package body format is
     print(fmt, args);
 
     for i in args'range loop
-      args(1).str := null;
+      args(i).str := null;
     end loop;
   end;
 
@@ -162,7 +162,7 @@ package body format is
     println(fmt, args);
 
     for i in args'range loop
-      args(1).str := null;
+      args(i).str := null;
     end loop;
   end;
 
@@ -175,7 +175,7 @@ package body format is
     println(fmt, args);
 
     for i in args'range loop
-      args(1).str := null;
+      args(i).str := null;
     end loop;
   end;
 
@@ -189,7 +189,7 @@ package body format is
     println(fmt, args);
 
     for i in args'range loop
-      args(1).str := null;
+      args(i).str := null;
     end loop;
   end;
 
@@ -204,7 +204,7 @@ package body format is
     println(fmt, args);
 
     for i in args'range loop
-      args(1).str := null;
+      args(i).str := null;
     end loop;
   end;
 
@@ -220,7 +220,7 @@ package body format is
     println(fmt, args);
 
     for i in args'range loop
-      args(1).str := null;
+      args(i).str := null;
     end loop;
   end;
 
