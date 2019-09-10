@@ -1,0 +1,9 @@
+project format is
+  for languages use ("Ada");
+
+  libs := ();
+
+  package compiler is
+    for default_switches ("Ada") use ("-gnatwa");
+  end compiler;
+end format;
