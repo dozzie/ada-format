@@ -138,7 +138,7 @@ package body format is
   procedure println(fmt: string; args: value_list) is
     str: constant string := sformat(fmt, args);
   begin
-    if str(str'last) = ASCII.LF then
+    if str'length > 0 and then str(str'last) = ASCII.LF then
       ada.text_io.put_line(str(str'first .. str'last - 1));
     else
       ada.text_io.put_line(str);
@@ -245,7 +245,7 @@ package body format is
                     fmt: string; args: value_list) is
     str: constant string := sformat(fmt, args);
   begin
-    if str(str'last) = ASCII.LF then
+    if str'length > 0 and then str(str'last) = ASCII.LF then
       ada.text_io.put_line(file, str(str'first .. str'last - 1));
     else
       ada.text_io.put_line(file, str);
